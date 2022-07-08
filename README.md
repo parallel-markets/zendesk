@@ -23,7 +23,7 @@ Check [Hex](https://hex.pm/packages/zendesk) to make sure you're using an up-to-
 You'll need a Zendesk user email and token to access the API (based on security recommendations from Zendesk, password authentication isn't supported).
 
 ```
-config :zendesk, token: "asdf123", email: "someuser@example.com"
+config :zendesk, token: "asdf123", email: "someuser@example.com", subdomain: "mysubdomain"
 ```
 Then, you can build and send requests.
 
