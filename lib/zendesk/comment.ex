@@ -21,15 +21,16 @@ defmodule Zendesk.Comment do
   @type t :: %__MODULE__{}
 
   @doc """
-  Get a list of `Zendesk.Macro`s.
+  Get a list of `Zendesk.Comment`s.
 
   If passed to `Zendesk.request!/1` it will return only the first results from the list.
   You can create a `Stream` to paginate over all results by calling `Zendesk.stream!/1`.
 
   For instance:
 
-       # get 400 macros
-       Zendesk.Macro.list()
+       # get 400 comments for a ticket
+       ticket
+       |> Zendesk.Comment.list_for()
        |> Zendesk.stream!()
        |> Stream.take(400)
        |> Enum.to_list()
@@ -37,12 +38,11 @@ defmodule Zendesk.Comment do
   """
   @spec list_for(Ticket.t()) :: Operation.t()
   def list_for(%Ticket{id: id}) do
-    %Operation{path: "tickets/#{id}/comments.json", parser: &parse_list/1}
-    |> Operation.with_page_size(1)
+    Operation.with_page_size(%Operation{
+      path: "tickets/#{id}/comments.json",
+      parser: &parse_list/1
+    })
   end
-
-  @doc false
-  def parse(%Result{parsed: %{macro: macro}}), do: {:ok, struct(Macro, macro)}
 
   @doc false
   def parse_list(%Result{parsed: %{comments: comments}} = result) do

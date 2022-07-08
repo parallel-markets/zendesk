@@ -65,7 +65,7 @@ defmodule Zendesk.Ticket do
   """
   @spec list() :: Operation.t()
   def list do
-    %Operation{path: "tickets.json", parser: &parse_list/1} |> Operation.with_page_size(1)
+    Operation.with_page_size(%Operation{path: "tickets.json", parser: &parse_list/1})
   end
 
   @doc """
@@ -73,7 +73,7 @@ defmodule Zendesk.Ticket do
 
   It doesn't actually change the ticket.
   """
-  @spec after_changes(non_neg_integer(), non_neg_integer()) :: Operation.t()
+  @spec after_changes(Ticket.t(), Macro.t()) :: Operation.t()
   def after_changes(%Ticket{id: ticket_id}, %Macro{id: macro_id}) do
     %Operation{path: "tickets/#{ticket_id}/macros/#{macro_id}/apply.json", parser: &parse/1}
   end

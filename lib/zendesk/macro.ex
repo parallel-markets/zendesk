@@ -42,7 +42,7 @@ defmodule Zendesk.Macro do
   """
   @spec list() :: Operation.t()
   def list do
-    %Operation{path: "macros.json", parser: &parse_list/1} |> Operation.with_page_size(1)
+    Operation.with_page_size(%Operation{path: "macros.json", parser: &parse_list/1})
   end
 
   @doc """
