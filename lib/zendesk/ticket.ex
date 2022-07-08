@@ -1,4 +1,5 @@
 defmodule Zendesk.Ticket do
+  alias Zendesk.{Comment, Macro}
   alias Zendesk.Client.{Operation, Result}
   alias __MODULE__
 
@@ -39,10 +40,12 @@ defmodule Zendesk.Ticket do
     :external_id
   ]
 
+  @type t :: %__MODULE__{}
+
   @doc """
   Get a specific `Zendesk.Ticket`.
   """
-  @spec show(String.t()) :: Operation.t()
+  @spec show(pos_integer()) :: Operation.t()
   def show(id), do: %Operation{path: "tickets/#{id}.json", parser: &parse/1}
 
   @doc """
@@ -62,8 +65,27 @@ defmodule Zendesk.Ticket do
   """
   @spec list() :: Operation.t()
   def list do
-    %Operation{path: "tickets.json", parser: &parse_list/1} |> Operation.with_page_size(1)
+    Operation.with_page_size(%Operation{path: "tickets.json", parser: &parse_list/1})
   end
+
+  @doc """
+  Returns the full ticket object as it would be after applying the macro to the ticket.
+
+  It doesn't actually change the ticket.
+  """
+  @spec after_changes(Ticket.t(), Macro.t()) :: Operation.t()
+  def after_changes(%Ticket{id: ticket_id}, %Macro{id: macro_id}) do
+    %Operation{path: "tickets/#{ticket_id}/macros/#{macro_id}/apply.json", parser: &parse/1}
+  end
+
+  @doc """
+  Get `Comment`s for the given `Ticket`.
+  """
+  @spec get_comments(Ticket.t()) :: Operation.t()
+  def get_comments(%Ticket{} = ticket), do: Comment.list_for(ticket)
+
+  @doc false
+  def parse(%Result{parsed: %{result: %{ticket: ticket}}}), do: {:ok, struct(Ticket, ticket)}
 
   @doc false
   def parse(%Result{parsed: %{ticket: ticket}}), do: {:ok, struct(Ticket, ticket)}
