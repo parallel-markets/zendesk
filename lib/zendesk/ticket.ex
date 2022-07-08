@@ -45,7 +45,7 @@ defmodule Zendesk.Ticket do
   @doc """
   Get a specific `Zendesk.Ticket`.
   """
-  @spec show(String.t()) :: Operation.t()
+  @spec show(pos_integer()) :: Operation.t()
   def show(id), do: %Operation{path: "tickets/#{id}.json", parser: &parse/1}
 
   @doc """

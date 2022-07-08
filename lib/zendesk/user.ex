@@ -72,13 +72,13 @@ defmodule Zendesk.User do
   @doc """
   Get a specific `Zendesk.User`.
   """
-  @spec show(String.t()) :: Operation.t()
+  @spec show(pos_integer()) :: Operation.t()
   def show(id), do: %Operation{path: "users/#{id}.json", parser: &parse/1}
 
   @doc """
   Delete a specific `Zendesk.User`.
   """
-  @spec delete(String.t() | User.t()) :: Operation.t()
+  @spec delete(pos_integer() | User.t()) :: Operation.t()
   def delete(%User{id: id}), do: delete(id)
 
   def delete(id), do: %Operation{type: :delete, path: "users/#{id}.json", parser: &parse/1}
@@ -88,7 +88,7 @@ defmodule Zendesk.User do
 
   Note that `Zendesk.User.delete/1` must be called first for this user.
   """
-  @spec permanently_delete(String.t() | User.t()) :: Operation.t()
+  @spec permanently_delete(pos_integer() | User.t()) :: Operation.t()
   def permanently_delete(%User{id: id}), do: permanently_delete(id)
 
   def permanently_delete(id) do

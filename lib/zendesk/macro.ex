@@ -22,7 +22,7 @@ defmodule Zendesk.Macro do
   @doc """
   Get a specific `Zendesk.Macro`.
   """
-  @spec show(String.t()) :: Operation.t()
+  @spec show(pos_integer()) :: Operation.t()
   def show(id), do: %Operation{path: "macros/#{id}.json", parser: &parse/1}
 
   @doc """
@@ -49,8 +49,9 @@ defmodule Zendesk.Macro do
   Returns the changes the macro would make to a ticket. It doesn't actually change a ticket.
   """
   @spec ticket_changes(Macro.t()) :: Operation.t()
-  def ticket_changes(%Macro{id: id}),
-    do: %Operation{path: "macros/#{id}/apply.json", parser: &Ticket.parse/1}
+  def ticket_changes(%Macro{id: id}) do
+    %Operation{path: "macros/#{id}/apply.json", parser: &Ticket.parse/1}
+  end
 
   @doc false
   def parse(%Result{parsed: %{macro: macro}}), do: {:ok, struct(Macro, macro)}
