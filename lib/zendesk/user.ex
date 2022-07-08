@@ -43,6 +43,8 @@ defmodule Zendesk.User do
     :photo
   ]
 
+  @type t :: %__MODULE__{}
+
   def search(query) when is_binary(query) do
     %Operation{path: "users/search.json", parser: &parse_list/1, params: [query: query]}
   end
@@ -63,8 +65,8 @@ defmodule Zendesk.User do
        |> IO.inspect()
   """
   @spec list() :: Operation.t()
-  def list do
-    %Operation{path: "users.json", parser: &parse_list/1} |> Operation.with_page_size()
+  def list(params \\ []) do
+    Operation.with_page_size(%Operation{path: "users.json", params: params, parser: &parse_list/1})
   end
 
   @doc """
@@ -76,7 +78,9 @@ defmodule Zendesk.User do
   @doc """
   Delete a specific `Zendesk.User`.
   """
-  @spec delete(String.t()) :: Operation.t()
+  @spec delete(String.t() | User.t()) :: Operation.t()
+  def delete(%User{id: id}), do: delete(id)
+
   def delete(id), do: %Operation{type: :delete, path: "users/#{id}.json", parser: &parse/1}
 
   @doc """
@@ -84,7 +88,9 @@ defmodule Zendesk.User do
 
   Note that `Zendesk.User.delete/1` must be called first for this user.
   """
-  @spec permanently_delete(String.t()) :: Operation.t()
+  @spec permanently_delete(String.t() | User.t()) :: Operation.t()
+  def permanently_delete(%User{id: id}), do: permanently_delete(id)
+
   def permanently_delete(id) do
     %Operation{type: :delete, path: "deleted_users/#{id}.json", parser: &parse_deleted/1}
   end
