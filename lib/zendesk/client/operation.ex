@@ -13,7 +13,7 @@ defmodule Zendesk.Client.Operation do
           path: String.t(),
           type: operation_type(),
           parser: Parser.parser_func(),
-          params: [{String.t(), String.t()}]
+          params: Keyword.t()
         }
 
   @doc """
