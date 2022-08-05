@@ -64,7 +64,7 @@ defmodule Zendesk.User do
        |> Enum.to_list()
        |> IO.inspect()
   """
-  @spec list() :: Operation.t()
+  @spec list(Keyword.t()) :: Operation.t()
   def list(params \\ []) do
     Operation.with_page_size(%Operation{path: "users.json", params: params, parser: &parse_list/1})
   end
