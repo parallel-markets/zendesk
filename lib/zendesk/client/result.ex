@@ -30,7 +30,7 @@ defmodule Zendesk.Client.Result do
       "application/json" <> _ ->
         %Result{
           body: body,
-          parsed: Jason.decode!(body, keys: :atoms!),
+          parsed: Jason.decode!(body, keys: :atoms),
           operation: operation,
           headers: headers
         }
