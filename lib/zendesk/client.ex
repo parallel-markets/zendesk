@@ -30,6 +30,18 @@ defmodule Zendesk.Client do
     end
   end
 
+  def request(%Operation{type: :post, path: path, parser: parser, body: body} = op) do
+    with {:ok, body, headers} <- post(make_url(path), body) do
+      parser.(Result.from_encoded(body, headers, op))
+    end
+  end
+
+  def request(%Operation{type: :put, path: path, parser: parser, body: body} = op) do
+    with {:ok, body, headers} <- put(make_url(path), body) do
+      parser.(Result.from_encoded(body, headers, op))
+    end
+  end
+
   @doc """
   Call the API with the given `Zendesk.Client.Operation`.
 
@@ -94,6 +106,49 @@ defmodule Zendesk.Client do
     end
   end
 
+  @doc """
+  Make a POST request to the API at the given URL.
+  """
+  @spec post(String.t(), [{atom(), String.t()}], Keyword.t()) ::
+          {:ok, binary(), list()} | {:error, String.t()}
+  def post(url, headers \\ [], body) do
+    req_headers = add_default_headers(headers, :post)
+    req_body = Jason.encode!(body)
+
+    case HTTPoison.post(url, req_body, req_headers) do
+      {:ok, %HTTPoison.Response{body: body, status_code: code, headers: headers}}
+      when code in [200, 201] ->
+        {:ok, body, headers}
+
+      {:ok, %HTTPoison.Response{status_code: code}} ->
+        {:error, "API returned #{code}"}
+
+      {:error, error} ->
+        {:error, HTTPoison.Error.message(error)}
+    end
+  end
+
+  @doc """
+  Make a PUT request to the API at the given URL.
+  """
+  @spec put(String.t(), [{atom(), String.t()}], Keyword.t()) ::
+          {:ok, binary(), list()} | {:error, String.t()}
+  def put(url, headers \\ [], body) do
+    req_headers = add_default_headers(headers, :put)
+    req_body = Jason.encode!(body)
+
+    case HTTPoison.put(url, req_body, req_headers) do
+      {:ok, %HTTPoison.Response{body: body, status_code: 200, headers: headers}} ->
+        {:ok, body, headers}
+
+      {:ok, %HTTPoison.Response{status_code: code}} ->
+        {:error, "API returned #{code}"}
+
+      {:error, error} ->
+        {:error, HTTPoison.Error.message(error)}
+    end
+  end
+
   defp make_url("https://" <> _ = url), do: url
 
   defp make_url(path) do
@@ -106,11 +161,24 @@ defmodule Zendesk.Client do
     Path.join("https://#{subdomain}.zendesk.com/api/v2", path)
   end
 
-  defp add_default_headers(headers) do
+  defp add_default_headers(headers, method \\ :get)
+
+  defp add_default_headers(headers, :get) do
     Keyword.merge(
       [
         Authorization: "Basic " <> get_credentials(),
         Accept: "Application/json; Charset=utf-8"
+      ],
+      headers
+    )
+  end
+
+  defp add_default_headers(headers, method) when method in [:post, :put] do
+    Keyword.merge(
+      [
+        Authorization: "Basic " <> get_credentials(),
+        Accept: "Application/json; Charset=utf-8",
+        "Content-Type": "application/json"
       ],
       headers
     )
