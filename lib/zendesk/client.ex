@@ -109,7 +109,7 @@ defmodule Zendesk.Client do
   @doc """
   Make a POST request to the API at the given URL.
   """
-  @spec post(String.t(), [{atom(), String.t()}], Keyword.t()) ::
+  @spec post(String.t(), [{atom(), String.t()}], map()) ::
           {:ok, binary(), list()} | {:error, String.t()}
   def post(url, headers \\ [], body) do
     req_headers = add_default_headers(headers, :post)
@@ -131,7 +131,7 @@ defmodule Zendesk.Client do
   @doc """
   Make a PUT request to the API at the given URL.
   """
-  @spec put(String.t(), [{atom(), String.t()}], Keyword.t()) ::
+  @spec put(String.t(), [{atom(), String.t()}], map()) ::
           {:ok, binary(), list()} | {:error, String.t()}
   def put(url, headers \\ [], body) do
     req_headers = add_default_headers(headers, :put)
