@@ -112,7 +112,7 @@ defmodule Zendesk.Client do
   @spec post(String.t(), [{atom(), String.t()}], map()) ::
           {:ok, binary(), list()} | {:error, String.t()}
   def post(url, headers \\ [], body) do
-    req_headers = add_default_headers(headers, :post)
+    req_headers = add_default_headers(headers)
     req_body = Jason.encode!(body)
 
     case HTTPoison.post(url, req_body, req_headers) do
@@ -134,7 +134,7 @@ defmodule Zendesk.Client do
   @spec put(String.t(), [{atom(), String.t()}], map()) ::
           {:ok, binary(), list()} | {:error, String.t()}
   def put(url, headers \\ [], body) do
-    req_headers = add_default_headers(headers, :put)
+    req_headers = add_default_headers(headers)
     req_body = Jason.encode!(body)
 
     case HTTPoison.put(url, req_body, req_headers) do
@@ -161,19 +161,7 @@ defmodule Zendesk.Client do
     Path.join("https://#{subdomain}.zendesk.com/api/v2", path)
   end
 
-  defp add_default_headers(headers, method \\ :get)
-
-  defp add_default_headers(headers, :get) do
-    Keyword.merge(
-      [
-        Authorization: "Basic " <> get_credentials(),
-        Accept: "Application/json; Charset=utf-8"
-      ],
-      headers
-    )
-  end
-
-  defp add_default_headers(headers, method) when method in [:post, :put] do
+  defp add_default_headers(headers) do
     Keyword.merge(
       [
         Authorization: "Basic " <> get_credentials(),

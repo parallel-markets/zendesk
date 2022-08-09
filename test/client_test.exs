@@ -36,6 +36,7 @@ defmodule Zendesk.ClientTest do
           assert rheaders == [
                    Authorization: "Basic #{bearer}",
                    Accept: "Application/json; Charset=utf-8",
+                   "Content-Type": "application/json",
                    one: "two"
                  ]
 
