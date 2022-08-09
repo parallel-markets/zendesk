@@ -14,7 +14,7 @@ defmodule Zendesk.Client.Operation do
           type: operation_type(),
           parser: Parser.parser_func(),
           params: Keyword.t(),
-          body: map()
+          body: map() | nil
         }
 
   @doc """
