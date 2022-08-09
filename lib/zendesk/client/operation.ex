@@ -5,15 +5,16 @@ defmodule Zendesk.Client.Operation do
   alias Zendesk.Client.Parser
   alias __MODULE__
 
-  defstruct path: "/", type: :get, parser: &Parser.default_parse/1, params: []
+  defstruct path: "/", type: :get, parser: &Parser.default_parse/1, params: [], body: nil
 
-  @type operation_type :: :get | :post | :patch | :delete
+  @type operation_type :: :get | :post | :patch | :put | :delete
 
   @type t :: %__MODULE__{
           path: String.t(),
           type: operation_type(),
           parser: Parser.parser_func(),
-          params: Keyword.t()
+          params: Keyword.t(),
+          body: map() | nil
         }
 
   @doc """

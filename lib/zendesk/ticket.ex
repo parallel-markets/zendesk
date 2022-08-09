@@ -69,6 +69,32 @@ defmodule Zendesk.Ticket do
   end
 
   @doc """
+  Create a `Ticket` with the given parameters.
+  """
+  @spec create(map()) :: Operation.t()
+  def create(ticket_params) do
+    %Operation{
+      type: :post,
+      path: "tickets.json",
+      parser: &parse/1,
+      body: %{ticket: ticket_params}
+    }
+  end
+
+  @doc """
+  Update a `Ticket` with the given parameters.
+  """
+  @spec update(Ticket.t() | integer(), map()) :: Operation.t()
+  def update(%Ticket{id: ticket_id}, ticket_params) do
+    %Operation{
+      type: :put,
+      path: "tickets/#{ticket_id}.json",
+      parser: &parse/1,
+      body: %{ticket: ticket_params}
+    }
+  end
+
+  @doc """
   Returns the full ticket object as it would be after applying the macro to the ticket.
 
   It doesn't actually change the ticket.
@@ -83,6 +109,13 @@ defmodule Zendesk.Ticket do
   """
   @spec get_comments(Ticket.t()) :: Operation.t()
   def get_comments(%Ticket{} = ticket), do: Comment.list_for(ticket)
+
+  @doc """
+  Create a `Comment` for the given `Ticket`.
+  """
+  @spec create_comment(Ticket.t(), map()) :: Operation.t()
+  def create_comment(%Ticket{} = ticket, comment_params),
+    do: Comment.create_for(ticket, comment_params)
 
   @doc false
   def parse(%Result{parsed: %{result: %{ticket: ticket}}}), do: {:ok, struct(Ticket, ticket)}

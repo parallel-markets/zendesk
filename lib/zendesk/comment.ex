@@ -44,6 +44,16 @@ defmodule Zendesk.Comment do
     })
   end
 
+  @doc """
+  Create a `Zendesk.Comment`.
+
+  If passed to `Zendesk.request!/1` it will return the entity which the comment was added to (e.g., a `Zendesk.Ticket`).
+  """
+  @spec create_for(Ticket.t(), map()) :: Operation.t()
+  def create_for(%Ticket{} = ticket, comment_params) do
+    Ticket.update(ticket, %{comment: comment_params})
+  end
+
   @doc false
   def parse_list(%Result{parsed: %{comments: comments}} = result) do
     list = Enum.map(comments, &struct(Comment, &1))

@@ -36,12 +36,65 @@ defmodule Zendesk.ClientTest do
           assert rheaders == [
                    Authorization: "Basic #{bearer}",
                    Accept: "Application/json; Charset=utf-8",
+                   "Content-Type": "application/json",
                    one: "two"
                  ]
 
           {:ok, %HTTPoison.Response{body: "body", status_code: 200}}
         end do
         assert Client.get(url, [one: "two"], test: "value") == {:ok, "body", []}
+      end
+    end
+  end
+
+  describe "When making POST requests" do
+    test "Request body and headers should be handled" do
+      url = "http://example.com"
+
+      with_mock HTTPoison,
+        post: fn rurl, rbody, rheaders ->
+          assert rurl == url
+
+          bearer = Base.encode64(@test_email <> "/token:" <> @test_token)
+
+          assert rheaders == [
+                   Authorization: "Basic #{bearer}",
+                   Accept: "Application/json; Charset=utf-8",
+                   "Content-Type": "application/json",
+                   one: "two"
+                 ]
+
+          assert rbody == Jason.encode!(%{test: "value"})
+
+          {:ok, %HTTPoison.Response{body: "body", status_code: 200}}
+        end do
+        assert Client.post(url, [one: "two"], %{test: "value"}) == {:ok, "body", []}
+      end
+    end
+  end
+
+  describe "When making PUT requests" do
+    test "Request body and headers should be handled" do
+      url = "http://example.com"
+
+      with_mock HTTPoison,
+        put: fn rurl, rbody, rheaders ->
+          assert rurl == url
+
+          bearer = Base.encode64(@test_email <> "/token:" <> @test_token)
+
+          assert rheaders == [
+                   Authorization: "Basic #{bearer}",
+                   Accept: "Application/json; Charset=utf-8",
+                   "Content-Type": "application/json",
+                   one: "two"
+                 ]
+
+          assert rbody == Jason.encode!(%{test: "value"})
+
+          {:ok, %HTTPoison.Response{body: "body", status_code: 200}}
+        end do
+        assert Client.put(url, [one: "two"], %{test: "value"}) == {:ok, "body", []}
       end
     end
   end
