@@ -5,7 +5,7 @@ defmodule Zendesk.Client.Operation do
   alias Zendesk.Client.Parser
   alias __MODULE__
 
-  defstruct path: "/", type: :get, parser: &Parser.default_parse/1, params: [], body: %{}
+  defstruct path: "/", type: :get, parser: &Parser.default_parse/1, params: [], body: nil
 
   @type operation_type :: :get | :post | :patch | :put | :delete
 
