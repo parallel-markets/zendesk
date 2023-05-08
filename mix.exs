@@ -1,7 +1,7 @@
 defmodule Zendesk.MixProject do
   use Mix.Project
 
-  @version "0.0.2"
+  @version "0.0.3"
   @repo "https://github.com/parallel-markets/zendesk"
 
   def project do
@@ -46,7 +46,7 @@ defmodule Zendesk.MixProject do
     [
       {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
       {:ex_doc, "~> 0.28", only: :dev},
-      {:httpoison, "~> 1.8"},
+      {:httpoison, "~> 2.1"},
       {:jason, "~> 1.2"},
       {:mock, "~> 0.3", only: :test}
     ]
