@@ -41,8 +41,8 @@ defmodule Zendesk.Client.Streamable do
       {:ok, result, stream} ->
         {result, stream}
 
-      err ->
-        raise RuntimeError, message: err
+      {:error, message} ->
+        raise RuntimeError, message: message
     end
   end
 end
