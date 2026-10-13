@@ -8,13 +8,21 @@ jobs:
       matrix:
         otp: ['24', '25']
         elixir: ['1.13.4', '1.14']
+        unlock: [false]
+        include:
+          - otp: '27'
+            elixir: '1.18'
+            unlock: true
     steps:
       - uses: actions/checkout@v2
       - uses: erlef/setup-beam@v1
         with:
           elixir-version: ${{matrix.elixir}}
           otp-version: ${{matrix.otp}}
+      - run: mix deps.unlock --all
+        if: matrix.unlock
       - run: mix deps.get
       - run: mix credo
+        if: ${{ !matrix.unlock }}
       - run: mix format --check-formatted
       - run: mix test

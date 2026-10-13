@@ -36,7 +36,7 @@ defmodule Zendesk.Client.Streamable do
   defp next(%Streamable{cursor: cursor} = st),
     do: next_with_params(st, [{:"page[after]", cursor}])
 
-  defp next_with_params(%Streamable{operation: %Operation{} = op}, params) do
+  defp next_with_params(%Streamable{operation: op}, params) do
     case Client.request(%Operation{op | params: Keyword.merge(op.params, params)}) do
       {:ok, result, stream} ->
         {result, stream}
